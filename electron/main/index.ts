@@ -39,6 +39,12 @@ async function createWindow(): Promise<void> {
 		shell.openExternal(details.url);
 		return { action: 'deny' };
 	});
+
+	ipcMain.on('set-always-on-top', (event, flag) => {
+		if (mainWindow) {
+			mainWindow.setAlwaysOnTop(flag);
+		}
+	});
 }
 
 async function main() {

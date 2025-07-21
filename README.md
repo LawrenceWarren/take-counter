@@ -14,13 +14,13 @@ An Electron application with Sveltekit, TypeScript, and tailwindcss v4
 ### Install
 
 ```bash
-$ pnpm install
+pnpm install
 ```
 
 ### Development
 
 ```bash
-$ pnpm dev
+pnpm dev
 ```
 
 ### Build
@@ -29,11 +29,11 @@ Note: only been tested on Macos without notarization
 
 ```bash
 # For windows
-$ pnpm build:win
+pnpm build:win
 
 # For macOS
-$ pnpm build:mac
+pnpm build:mac
 
 # For Linux
-$ pnpm build:linux
+pnpm build:linux
 ```
