@@ -47,7 +47,7 @@ async function create_window(): Promise<void> {
 		return { action: 'deny' };
 	});
 
-	ipcMain.on('set-always-on-top', (event, flag) => {
+	ipcMain.on('set-always-on-top', (_event, flag) => {
 		if (mainWindow) {
 			mainWindow.setAlwaysOnTop(flag);
 		}

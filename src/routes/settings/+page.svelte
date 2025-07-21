@@ -14,26 +14,28 @@
 </script>
 
 <div class="container">
-	<a href="/" class="back-link">Go back Home</a>
+	<a href="/">Go back Home</a>
 
-	<h1 class="title">Settings</h1>
+	<h1>Settings</h1>
 
 	<label class="toggle-wrapper">
+		<span class="toggle-label">Always on Top</span>
 		<input type="checkbox" bind:checked={alwaysOnTop} class="toggle-input" />
 		<div class="toggle-track">
 			<div class="toggle-thumb"></div>
 		</div>
-		<span class="toggle-label">Always on Top</span>
 	</label>
 
 	<button on:click={handleSelectDirectory} class="select-button"> Select Folder </button>
 
-	{#if selectedPath}
-		<div class="selected-path">
+	<div class="selected-path">
+		{#if $selectedPath}
 			<strong>Selected:</strong>
 			{$selectedPath}
-		</div>
-	{/if}
+		{:else}
+			<strong>No folder selected</strong>
+		{/if}
+	</div>
 </div>
 
 <style>

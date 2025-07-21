@@ -3,14 +3,14 @@
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 
-	const fileCount = writable(0);
+	const file_count = writable(0);
 
 	$: filter_text = '';
 
 	onMount(() => {
 		window.api.watch_directory($selectedPath as string, filter_text);
 		window.api.on_directory_count((count) => {
-			fileCount.set(count);
+			file_count.set(count);
 		});
 	});
 
@@ -20,16 +20,17 @@
 	}
 </script>
 
-<div>
+<div class="container">
 	<h1>Welcome to TakeCounter</h1>
 	<a href="/settings">Go to settings</a>
 
-	<label for="filter">Filter:</label>
-	<input id="filter" type="text" class="input" bind:value={filter_text} />
+	<div>
+		<label for="filter">Filter file names:</label>
+		<input id="filter" type="text" class="input" bind:value={filter_text} />
+	</div>
 
 	{#if $selectedPath}
-		<div>
-			<p>Files in {$selectedPath}: <strong>{$fileCount}</strong></p>
-		</div>
+		<p>Files in <strong>{$selectedPath}</strong>:</p>
+		<p class="the-counter"><strong>{$file_count}</strong></p>
 	{/if}
 </div>
