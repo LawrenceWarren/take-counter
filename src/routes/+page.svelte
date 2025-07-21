@@ -1,73 +1,35 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card/index.js';
+	import { selectedPath } from '$lib/stores/file_path';
+	import { onMount } from 'svelte';
+	import { writable } from 'svelte/store';
 
-	/**
-	 * logs from the preload context. To see the logs, open DevTools Console (F12)
-	 * to learn more about preload context, see https://www.electronjs.org/docs/latest/tutorial/tutorial-preload
-	 */
-	function logFromPreload() {
-		if (window.electron) {
-			window.electron.preload();
-		} else {
-			// you could implement alternative logic here if you deployed your app as website. For example call a rest api
-		}
-	}
+	const fileCount = writable(0);
 
-	/**
-	 * logs from the main process. To see the logs, open Main Process logs in DevTools Console (F12)
-	 * to learn more about main process, see https://www.electronjs.org/docs/latest/api/context-bridge
-	 */
-	function logFromMain() {
-		if (window.electron) {
-			window.electron.main();
-		} else {
-			// you could implement alternative logic here if you deployed your app as website. For example call a rest api
-		}
+	$: filter_text = '';
+
+	onMount(() => {
+		window.api.watch_directory($selectedPath as string, filter_text);
+		window.api.on_directory_count((count) => {
+			fileCount.set(count);
+		});
+	});
+
+	$: {
+		console.log(filter_text);
+		window.api.watch_directory($selectedPath as string, filter_text);
 	}
 </script>
 
-<div class="flex flex-col items-center justify-center min-h-screen">
-	<h1 class="text-4xl font-bold">Welcome to SvelteKit + Electron</h1>
-	<a href="/settings" class="text-blue-500 underline mb-10">Go to settings</a>
-	<div class="flex flex-row gap-12 mt-4">
-		<Card.Root class="w-80">
-			<Card.Header>
-				<Card.Title>Preload Context</Card.Title>
-				<Card.Description>Test the preload context functionality</Card.Description>
-			</Card.Header>
-			<Card.Content>
-				<button
-					class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 active:scale-95 transition-transform cursor-pointer"
-					onclick={logFromPreload}
-				>
-					Preload Context Log
-				</button>
-			</Card.Content>
-			<Card.Footer>
-				<span class="text-sm text-center opacity-75">
-					Check electron/preload/index.ts and DevTools Console <strong>(F12)</strong>
-				</span>
-			</Card.Footer>
-		</Card.Root>
+<div>
+	<h1>Welcome to TakeCounter</h1>
+	<a href="/settings">Go to settings</a>
 
-		<Card.Root class="w-80">
-			<Card.Header>
-				<Card.Title>Main Process</Card.Title>
-				<Card.Description>Test the main process functionality</Card.Description>
-			</Card.Header>
-			<Card.Content>
-				<button
-					class="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 active:scale-95 transition-transform cursor-pointer"
-					onclick={logFromMain}
-				>
-					Main Process Log
-				</button>
-			</Card.Content>
-			<Card.Footer>
-				<span class="text-sm text-center opacity-75">
-					Check electron/main/index.ts and Main Process logs
-				</span>
-			</Card.Footer>
-		</Card.Root>
-	</div>
+	<label for="filter">Filter:</label>
+	<input id="filter" type="text" class="input" bind:value={filter_text} />
+
+	{#if $selectedPath}
+		<div>
+			<p>Files in {$selectedPath}: <strong>{$fileCount}</strong></p>
+		</div>
+	{/if}
 </div>

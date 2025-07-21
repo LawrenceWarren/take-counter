@@ -1,15 +1,22 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron';
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import serve from 'electron-serve';
 import icon from '../../resources/icon.png?asset';
+import fs from 'fs';
 
-const loadURL = serve({
+let watcher;
+
+const load_url = serve({
 	directory: 'out/svelte',
 	scheme: 'app'
 });
 
-async function createWindow(): Promise<void> {
+function filter_list(list: string[], filter_text: string) {
+	return list.filter((item) => item.toLowerCase().includes(filter_text.toLowerCase()));
+}
+
+async function create_window(): Promise<void> {
 	// Create the browser window.
 	const mainWindow = new BrowserWindow({
 		width: 900,
@@ -28,7 +35,7 @@ async function createWindow(): Promise<void> {
 	if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
 		await mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
 	} else {
-		await loadURL(mainWindow);
+		await load_url(mainWindow);
 	}
 
 	// Show window when ready
@@ -45,6 +52,38 @@ async function createWindow(): Promise<void> {
 			mainWindow.setAlwaysOnTop(flag);
 		}
 	});
+
+	ipcMain.handle('select-directory', async () => {
+		const result = await dialog.showOpenDialog({
+			properties: ['openDirectory']
+		});
+		return result.canceled ? null : result.filePaths[0];
+	});
+
+	ipcMain.handle('watch-directory', (event, dirPath, filter_text) => {
+		if (watcher) watcher.close();
+
+		watcher = fs.watch(dirPath, { persistent: true }, () => {
+			fs.readdir(dirPath, (err, files) => {
+				if (err) {
+					event.sender.send('directory-count', 0);
+				} else {
+					const filtered = filter_list(files, filter_text);
+					console.log('Filtered is...');
+					console.log(filtered);
+					event.sender.send('directory-count', filtered.length);
+				}
+			});
+		});
+
+		// Initial count
+		fs.readdir(dirPath, (err, files) => {
+			const filtered = filter_list(files, filter_text);
+			console.log('Filtered is...');
+			console.log(filtered);
+			event.sender.send('directory-count', err ? 0 : filtered.length);
+		});
+	});
 }
 
 async function main() {
@@ -60,13 +99,13 @@ async function main() {
 			optimizer.watchWindowShortcuts(window);
 		});
 
-		await createWindow();
+		await create_window();
 
 		app.on('activate', async () => {
 			// On macOS it's common to re-create a window in the app when the
 			// dock icon is clicked and there are no other windows open.
 			if (BrowserWindow.getAllWindows().length === 0) {
-				await createWindow();
+				await create_window();
 			}
 		});
 

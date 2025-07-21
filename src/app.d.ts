@@ -12,8 +12,10 @@ declare global {
 		api: {
 			main: () => void;
 			preload: () => void;
-			setAlwaysOnTop: (alwaysOnTop: boolean) => void;
-			// add more methods if needed
+			set_always_on_top: (alwaysOnTop: boolean) => void;
+			select_directory: () => Promise<string | null>;
+			watch_directory: (dirPath: string, filter_text: string) => Promise<void>;
+			on_directory_count: (callback: (count: number) => void) => void;
 		};
 	}
 }
