@@ -1,6 +1,6 @@
 {
-	"name": "sveltekit-electron",
-	"version": "1.0.0",
+	"name": "take-counter",
+	"version": "0.1.0",
 	"description": "An Electron application with Svelte and TypeScript",
 	"type": "module",
 	"main": "./out/electron/main/index.js",

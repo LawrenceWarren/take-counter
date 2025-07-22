@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: sveltekit-electron
+productName: take-counter
 directories:
   buildResources: build
 files:
@@ -14,7 +14,7 @@ asarUnpack:
   - resources/**
 #afterSign: build/notarize.js # TODO implement notarization for production builds
 win:
-  executableName: sveltekit-electron
+  executableName: ${productName}
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -25,8 +25,8 @@ mac:
   identity: null # For testing local builds
   notarize: false # For testing local builds
   extendInfo:
-    - NSCameraUsageDescription: Application requests access to the device's camera.
-    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+    #- NSCameraUsageDescription: Application requests access to the device's camera.
+    #- NSMicrophoneUsageDescription: Application requests access to the device's microphone.
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
 dmg:
